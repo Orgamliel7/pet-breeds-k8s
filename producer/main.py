@@ -10,7 +10,7 @@ API_URLS = [
     "https://api.thecatapi.com/v1/breeds"
 ]
 
-KAFKA_BROKER = os.getenv('KAFKA_SERVER', 'kafka:9092')
+KAFKA_BROKER = os.getenv('KAFKA_SERVER', 'kafka-0.kafka:9092,kafka-1.kafka:9092,kafka-2.kafka:9092')
 KAFKA_TOPIC = 'pets'
 
 def fetch_breeds():

@@ -14,13 +14,10 @@ spec:
     spec:
       containers:
       - name: producer
-        image: god_bless-producer:latest
-        imagePullPolicy: IfNotPresent
+        image: localhost:5000/god_bless-producer:latest
         env:
-        - name: KAFKA_SERVER
-          value: "kafka:9092"
-        command: ["python", "./producer/main.py"]
-
+        - name: KAFKA_BROKERS
+          value: "kafka-0.kafka.default.svc.cluster.local:9092,kafka-1.kafka.default.svc.cluster.local:9092,kafka-2.kafka.default.svc.cluster.local:9092"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -38,9 +35,7 @@ spec:
     spec:
       containers:
       - name: consumer
-        image: god_bless-consumer:latest
-        imagePullPolicy: IfNotPresent
+        image: localhost:5000/god_bless-consumer:latest
         env:
-        - name: KAFKA_SERVER
-          value: "kafka:9092"
-        command: ["python", "./consumer/main.py"]
+        - name: KAFKA_BROKERS
+          value: "kafka-0.kafka.default.svc.cluster.local:9092,kafka-1.kafka.default.svc.cluster.local:9092,kafka-2.kafka.default.svc.cluster.local:9092"

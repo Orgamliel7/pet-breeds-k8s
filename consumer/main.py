@@ -3,7 +3,7 @@ import os
 from kafka import KafkaConsumer
 
 KAFKA_TOPIC = 'pets'
-KAFKA_BROKER = os.getenv('KAFKA_SERVER', 'kafka:9092')  # Use environment variable
+KAFKA_BROKER = os.getenv('KAFKA_SERVER', 'kafka-0.kafka:9092,kafka-1.kafka:9092,kafka-2.kafka:9092')
 
 consumer = KafkaConsumer(
     KAFKA_TOPIC,

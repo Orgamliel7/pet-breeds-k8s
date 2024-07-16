@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pets-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pets-producer
+  template:
+    metadata:
+      labels:
+        app: pets-producer
+    spec:
+      containers:
+      - name: producer
+        image: god_bless-producer:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KAFKA_SERVER
+          value: "kafka:9092"
+        command: ["python", "./producer/main.py"]
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pets-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pets-consumer
+  template:
+    metadata:
+      labels:
+        app: pets-consumer
+    spec:
+      containers:
+      - name: consumer
+        image: god_bless-consumer:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KAFKA_SERVER
+          value: "kafka:9092"
+        command: ["python", "./consumer/main.py"]

@@ -1,0 +1,56 @@
+K8s Pod Management:
+1. kubectl get pods
+   // List all pods in cluster
+
+2. kubectl logs -f deployment/pets-consumer
+   kubectl logs -f deployment/pets-producer
+   // Stream logs from consumer/producer pods
+
+3. kubectl describe statefulset kafka
+   // Detailed info about Kafka StatefulSet
+
+K8s Deployment Management:
+1. kubectl scale deployment pets-producer --replicas=0
+   kubectl scale deployment pets-consumer --replicas=0
+   // Scale down producer/consumer to zero
+
+2. kubectl delete deployment pets-producer
+   kubectl delete deployment pets-consumer 
+   // Delete producer/consumer deployments
+
+3. kubectl apply -f k8s/deployment.yaml 
+   // Apply deployment configuration file
+
+4. kubectl rollout restart deployment pets-producer 
+   // Restart producer deployment
+
+5. kubectl get deployments
+   // List all deployments
+
+Docker Image and Registry Management:
+1. docker images
+   // List all Docker images
+
+2. docker build -t god_bless-consumer:latest .
+   // Build consumer Docker image
+
+3. docker tag god_bless-consumer:latest localhost:5000/god_bless-consumer:latest
+   // Tag consumer image for local registry
+
+4. docker push localhost:5000/god_bless-consumer:latest
+   // Push consumer image to local registry
+
+5. docker run -d -p 5000:5000 --name registry registry:2
+   // Start local Docker registry
+
+6. docker start registry
+   // Start existing local registry
+
+Kafka-specific Commands:
+1. kubectl logs kafka-0
+   // View logs of first Kafka broker
+
+
+kubectl logs deployment/pets-consumer | python pet.py  
+// Feed python file with consumer logs
+

@@ -1,0 +1,28 @@
+Helm Integration Guide:
+
+1. Install Helm (WSL):
+   curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+2. Create Helm Chart: (collection of files that describe my Kubernetes application)
+   helm create pet-breed-pipeline
+
+3. Move Kubernetes Manifests:
+   mv deployment.yaml kafka-statefulset.yaml zookeeper-statefulset.yaml service.yaml zookeeper-service.yaml pet-breed-pipeline/templates/
+
+4. Edit Values:
+   nano pet-breed-pipeline/values.yaml 
+   # Define default values for Kafka, ZooKeeper, producer, and consumer
+
+5. Create Environment Files:
+   touch pet-breed-pipeline/values-dev.yaml pet-breed-pipeline/values-prod.yaml
+   # Separate value files for different environments (development and production). For example - different consumer image and more replicas in production.
+
+6. Templatize Manifests:
+   # Update templates (K8s YAML files) to use Helm variables. For example: 
+   spec:
+   replicas: {{ .Values.kafka.replicas }} # environment flexibility
+
+7. Deploy Chart:
+   helm install pet-pipeline-dev ./pet-breed-pipeline -f pet-breed-pipeline/values-dev.yaml
+   # Single command to deploy the app to K8s using the Helm chart located at ./pet-breed-pipeline, applying configurations from values-dev.yaml, and naming the deployment pet-pipeline-dev.
+

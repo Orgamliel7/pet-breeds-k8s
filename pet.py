@@ -10,19 +10,25 @@ def determine_pet_type(data): # Based on specific key words unique to each API r
     else:
         return 'Unknown'
 
-DOG_ASCII = """
+# ANSI codes for colors
+BROWN = '\033[38;5;94m'  
+GRAY = '\033[1;30m'   
+RESET = '\033[0m'     
+
+DOG_ASCII = f"""{BROWN}
 ,-.___,-.
 \_/_ _\_/
   )O_O(
- { (_) }
+ {{ (_) }}
   `-^-'  
-"""
+{RESET}"""
 
-CAT_ASCII = """
+CAT_ASCII = f"""{GRAY}
  /\_/\\
 ( o.o )
  > ^ <
-"""
+{RESET}"""
+
 
 def main():
     count = 1

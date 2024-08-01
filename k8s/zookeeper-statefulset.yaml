@@ -1,9 +1,11 @@
+# StatefulSet for ZooKeeper nodes, providing coordination services for Kafka
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: zookeeper
 spec:
   serviceName: "zookeeper-headless"
+  # Running 3 ZooKeeper instances - for fault tolerance
   replicas: 3
   selector:
     matchLabels:
@@ -30,6 +32,7 @@ spec:
         - name: ZOOKEEPER_SYNC_LIMIT
           value: "2"
         - name: ZOOKEEPER_SERVERS
+        # Define ZooKeeper ensemble
           value: "zookeeper-0.zookeeper-headless:2888:3888;zookeeper-1.zookeeper-headless:2888:3888;zookeeper-2.zookeeper-headless:2888:3888"
         - name: ZOOKEEPER_SERVER_ID
           valueFrom:

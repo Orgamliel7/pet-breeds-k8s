@@ -1,9 +1,10 @@
+# Headless service (without cluster IP -> direct access between individual pods)
 apiVersion: v1
 kind: Service
 metadata:
   name: zookeeper-headless
 spec:
-  clusterIP: None
+  clusterIP: None # Headless service
   selector:
     app: zookeeper
   ports:
@@ -12,4 +13,4 @@ spec:
     - port: 2888
       name: server
     - port: 3888
-      name: leader-election
+      name: leader-election # port for LE among ZooKeeper nodes

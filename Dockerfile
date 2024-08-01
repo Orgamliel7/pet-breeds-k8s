@@ -1,18 +1,17 @@
-# Use the official Python image
+# Specifies container image build instructions for producer & consumer apps
 FROM python:3.9-slim
 
-# Set the working directory
+# working dir
 WORKDIR /app
 
-# Copy requirements files
+
 COPY ./producer/requirements.txt ./producer/requirements.txt
 COPY ./consumer/requirements.txt ./consumer/requirements.txt
 
-# Install dependencies
+# Dependencies
 RUN pip install --no-cache-dir -r producer/requirements.txt
 RUN pip install --no-cache-dir -r consumer/requirements.txt
 
-# Copy the source code
 COPY ./producer ./producer
 COPY ./consumer ./consumer
 

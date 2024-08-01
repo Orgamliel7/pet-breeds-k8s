@@ -1,9 +1,11 @@
+# Configures a StatefulSet for Kafka brokers, ensuring stable network IDs and persistent storage
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: kafka
 spec:
   serviceName: "kafka"
+  # Running 3 Kafka brokers for fault tolerance & to provide high availability
   replicas: 3
   selector:
     matchLabels:
@@ -33,9 +35,9 @@ spec:
           value: PLAINTEXT:PLAINTEXT
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
           value: PLAINTEXT
-        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR # specific to the internal offsets topic (metadata) - making it highly available
           value: "3"
-        - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR # applies to all new user-created topics to have 3 replicas by default - improving fault tolerance
           value: "3"
         - name: KAFKA_MIN_INSYNC_REPLICAS
           value: "2"

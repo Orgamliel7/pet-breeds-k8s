@@ -23,8 +23,8 @@ def fetch_breeds():
     for url in API_URLS:
         try:
             response = requests.get(url)
-            if response.status_code == 200: # Parsing from JSON to Python obj  
-                breeds = response.json() 
+            if response.status_code == 200:   
+                breeds = response.json() # Parsing from JSON to Python obj
                 all_breeds.extend(breeds)
             else:
                 print(

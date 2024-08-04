@@ -1,4 +1,6 @@
 # Specifies container image build instructions for producer & consumer apps
+
+# Base image
 FROM python:3.9-slim
 
 # working dir

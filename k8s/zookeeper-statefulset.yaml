@@ -1,12 +1,11 @@
-# StatefulSet for ZooKeeper nodes, providing coordination services for Kafka
+# StatefulSet for scalable and stable ZooKeeper nodes, providing coordination services for Kafka
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: zookeeper
 spec:
-  serviceName: "zookeeper-headless"
-  # Running 3 ZooKeeper instances - for fault tolerance
-  replicas: 3
+  serviceName: "zookeeper-headless" # Use this service for network identity.
+  replicas: 3 # Fault tolerance
   selector:
     matchLabels:
       app: zookeeper
@@ -19,10 +18,11 @@ spec:
       - name: zookeeper
         image: confluentinc/cp-zookeeper:latest
         ports:
-        - containerPort: 2181
-        - containerPort: 2888
-        - containerPort: 3888
+        - containerPort: 2181 # Client port
+        - containerPort: 2888 # Follower port
+        - containerPort: 3888 # LE port
         env:
+        # Config params
         - name: ZOOKEEPER_CLIENT_PORT
           value: "2181"
         - name: ZOOKEEPER_TICK_TIME
@@ -32,17 +32,18 @@ spec:
         - name: ZOOKEEPER_SYNC_LIMIT
           value: "2"
         - name: ZOOKEEPER_SERVERS
-        # Define ZooKeeper ensemble
+        # Define ZooKeeper ensemble with internal ports for node-to-node communication
           value: "zookeeper-0.zookeeper-headless:2888:3888;zookeeper-1.zookeeper-headless:2888:3888;zookeeper-2.zookeeper-headless:2888:3888"
         - name: ZOOKEEPER_SERVER_ID
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        # Write the server ID (1,2,3) to myid file for ZooKeeper self identification
         command:
         - sh
         - -c
         - |
           ZOOKEEPER_SERVER_ID=$((${ZOOKEEPER_SERVER_ID##*-} + 1))
-          echo "${ZOOKEEPER_SERVER_ID}" > /var/lib/zookeeper/data/myid
+          echo "${ZOOKEEPER_SERVER_ID}" > /var/lib/zookeeper/data/myid 
           export ZOOKEEPER_SERVER_ID
           /etc/confluent/docker/run

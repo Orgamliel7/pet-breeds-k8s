@@ -1,24 +1,25 @@
-# K8s Deployments for the producer & consumer apps. Stateless and scalable as they don’t have persistent IDs or storage
+# K8s Deployments (No persistent IDs/storage) for the Stateless producer & consumer. Resilience and scalability as they interchangeable. 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pets-producer
 spec:
   replicas: 1
-  selector:
+  selector: # Identifying pods
     matchLabels:
       app: pets-producer
-  template:
+  template: # For creating pods
     metadata:
       labels:
         app: pets-producer
     spec:
       containers:
       - name: producer
-        image: god_bless-producer:v1
+        image: localhost:5000/god_bless-producer:v11
+        imagePullPolicy: Always
         env:
         - name: KAFKA_BROKERS
-          value: "kafka-0.kafka.default.svc.cluster.local:9092,kafka-1.kafka.default.svc.cluster.local:9092,kafka-2.kafka.default.svc.cluster.local:9092"
+          value: "kafka-0.kafka.default.svc.cluster.local:9092"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,6 +38,7 @@ spec:
       containers:
       - name: consumer
         image: localhost:5000/god_bless-consumer:latest
+        imagePullPolicy: Always
         env:
         - name: KAFKA_BROKERS
-          value: "kafka-0.kafka.default.svc.cluster.local:9092,kafka-1.kafka.default.svc.cluster.local:9092,kafka-2.kafka.default.svc.cluster.local:9092"
+          value: "kafka-0.kafka.default.svc.cluster.local:9092"

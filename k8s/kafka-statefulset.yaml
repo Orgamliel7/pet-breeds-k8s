@@ -5,7 +5,7 @@ metadata:
   name: kafka
 spec:
   serviceName: "kafka"
-  # Running 3 Kafka brokers for fault tolerance & to provide high availability
+  # Running 3 Kafka brokers for fault tolerance & providing high availability
   replicas: 3
   selector:
     matchLabels:
@@ -19,31 +19,41 @@ spec:
       - name: kafka
         image: confluentinc/cp-kafka:latest
         ports:
-        - containerPort: 9092
+        - containerPort: 9092 # Internal port
+        - containerPort: 29092 # External port
         env:
+        #Downward API to get pod details
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
         - name: KAFKA_ZOOKEEPER_CONNECT
-          value: "zookeeper-headless:2181"
-        - name: KAFKA_ADVERTISED_LISTENERS
-          value: PLAINTEXT://$(POD_NAME).kafka.default.svc.cluster.local:9092
+          value: "zookeeper-headless:2181" # Zookeeper client (kafka brokers) port
         - name: KAFKA_LISTENERS
-          value: PLAINTEXT://:9092
+          value: "PLAINTEXT://:9092,EXTERNAL://:29092"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://$(POD_NAME).kafka.default.svc.cluster.local:9092,EXTERNAL://$(POD_IP):29092"
         - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-          value: PLAINTEXT:PLAINTEXT
+          value: "PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
-          value: PLAINTEXT
-        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR # specific to the internal offsets topic (metadata) - making it highly available
+          value: "PLAINTEXT"
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
           value: "3"
-        - name: KAFKA_DEFAULT_REPLICATION_FACTOR # applies to all new user-created topics to have 3 replicas by default - improving fault tolerance
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR # Applies to new user-created topics to have 3 replicas by default - improving fault tolerance
           value: "3"
         - name: KAFKA_MIN_INSYNC_REPLICAS
-          value: "2"
+          value: "2" # Pervents data loss, balance between availability and consistency
+        - name: KAFKA_BROKER_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         command:
         - sh
         - -c
         - |
-          export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${POD_NAME}.kafka.default.svc.cluster.local:9092
+          export KAFKA_BROKER_ID=$(echo $POD_NAME | awk -F'-' '{print $2}')
           /etc/confluent/docker/run

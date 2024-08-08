@@ -54,3 +54,8 @@ Kafka-specific Commands:
 kubectl logs deployment/pets-consumer | python pet.py  
 // Feed python file with consumer logs
 
+
+// View producer logs
+kubectl exec -it $(kubectl get pods | grep producer | awk '{print $1}') -- /bin/sh
+cd /app/producer
+python main.py

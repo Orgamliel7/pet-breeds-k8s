@@ -1,18 +1,19 @@
-# Creates K8s Services for Kafka and ZooKeeper, enabling network access for Kafka brokers and ZooKeeper nodes
+# K8s Services for Kafka and ZooKeeper, enabling network access for Kafka brokers and ZooKeeper nodes 
 
-# Kafka service for the clients to connect my Kafka brokers. Clients are Producer & Consumer apps 
+# Kafka headless service for the clients to connect my Kafka brokers
 apiVersion: v1
 kind: Service
 metadata:
   name: kafka
 spec:
+  clusterIP: None
   selector:
     app: kafka
   ports:
-    - port: 9092
+  - port: 9092
 
 ---
-# Zookeeper service for the client (Kafka) to connect ZooKeeper. Single entry point to the ZooKeeper ensemble
+# Zookeeper ClusterIP service for the client (Kafka) to connect ZooKeeper ensemble (receptionist)
 apiVersion: v1
 kind: Service
 metadata:
